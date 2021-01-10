@@ -1,20 +1,36 @@
-import React, { Component } from 'react';
-import axios from 'axios'
-
+import React, { Component } from "react";
+import axios from "axios";
+import Ymap from "./Ymap/index";
 class App extends Component {
+  state = {
+    dots: [],
+  };
+  getDots = () => {
+    axios.post(`http://localhost:3000/api/getDots`).then((res) => {
+      this.setState({ dots: res.data });
+    });
+  };
+  deleteDot = (id) => {
+    axios.post(`http://localhost:3000/api/deleteDot`, { id }).then((res) => {
+      this.setState({ dots: res.data });
+    });
+  };
+  createDot = (data) => {
+    axios.post("http://localhost:3000/api/addDot", { data }).then((res) => {
+      this.setState({ dots: res.data });
 
-state={
-  user:''
-}
-  getUsers=()=>{
-    axios.post(`http://localhost:3000/api/a`).then(res=>{
-      this.setState({user:res})
-    })
-  }
+    });
+  };
   render() {
+    const { dots } = this.state;
     return (
       <div>
-        <button onClick={this.getUsers} ></button>
+        <button onClick={this.getDots}>Прорисовать точки из БД </button>
+        <Ymap
+          dots={dots}
+          deleteDot={this.deleteDot}
+          createDot={this.createDot}
+        />
       </div>
     );
   }

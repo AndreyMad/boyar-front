@@ -1,54 +1,77 @@
-ymaps.ready(function () {
+ymaps.ready(init);
+
+function init() {
+
+    // Создание экземпляра карты.
     var myMap = new ymaps.Map('map', {
-            center: [55.751574, 37.573856],
-            zoom: 9
+            center: [50.443705, 30.530946],
+            zoom: 14
         }, {
             searchControlProvider: 'yandex#search'
         }),
+        // Контейнер для меню.
+        menu = $('<ul class="menu"></ul>');
+        
+    for (var i = 0, l = groups.length; i < l; i++) {
+        createMenuGroup(groups[i]);
+    }
 
-        // Создаём макет содержимого.
-        MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
-            '<div style="color: #FFFFFF; font-weight: bold;">$[properties.iconContent]</div>'
-        ),
+    function createMenuGroup (group) {
+        // Пункт меню.
+        var menuItem = $('<li><a href="#">' + group.name + '</a></li>'),
+        // Коллекция для геообъектов группы.
+            collection = new ymaps.GeoObjectCollection(null, { preset: group.style }),
+        // Контейнер для подменю.
+            submenu = $('<ul class="submenu"></ul>');
 
-        myPlacemark = new ymaps.Placemark(myMap.getCenter(), {
-            hintContent: 'Собственный значок метки',
-            balloonContent: 'Это красивая метка'
-        }, {
-            // Опции.
-            // Необходимо указать данный тип макета.
-            iconLayout: 'default#image',
-            // Своё изображение иконки метки.
-            iconImageHref: './photo_2020-08-03_23-44-10.jpg',
-            // Размеры метки.
-            iconImageSize: [30, 42],
-            // Смещение левого верхнего угла иконки относительно
-            // её "ножки" (точки привязки).
-            iconImageOffset: [-5, -38]
-        }),
+        // Добавляем коллекцию на карту.
+        myMap.geoObjects.add(collection);
+        // Добавляем подменю.
+        menuItem
+            .append(submenu)
+            // Добавляем пункт в меню.
+            .appendTo(menu)
+            // По клику удаляем/добавляем коллекцию на карту и скрываем/отображаем подменю.
+            .find('a')
+            .bind('click', function () {
+                if (collection.getParent()) {
+                    myMap.geoObjects.remove(collection);
+                    submenu.hide();
+                } else {
+                    myMap.geoObjects.add(collection);
+                    submenu.show();
+                }
+            });
+        for (var j = 0, m = group.items.length; j < m; j++) {
+            createSubMenu(group.items[j], collection, submenu);
+        }
+    }
 
-        myPlacemarkWithContent = new ymaps.Placemark([55.661574, 37.573856], {
-            hintContent: 'Собственный значок метки с контентом',
-            balloonContent: 'А эта — новогодняя',
-            iconContent: '12'
-        }, {
-            // Опции.
-            // Необходимо указать данный тип макета.
-            iconLayout: 'default#imageWithContent',
-            // Своё изображение иконки метки.
-            iconImageHref: 'images/ball.png',
-            // Размеры метки.
-            iconImageSize: [48, 48],
-            // Смещение левого верхнего угла иконки относительно
-            // её "ножки" (точки привязки).
-            iconImageOffset: [-24, -24],
-            // Смещение слоя с содержимым относительно слоя с картинкой.
-            iconContentOffset: [15, 15],
-            // Макет содержимого.
-            iconContentLayout: MyIconContentLayout
-        });
+    function createSubMenu (item, collection, submenu) {
+        // Пункт подменю.
+        var submenuItem = $('<li><a href="#">' + item.name + '</a></li>'),
+        // Создаем метку.
+            placemark = new ymaps.Placemark(item.center, { balloonContent: item.name });
 
-    myMap.geoObjects
-        .add(myPlacemark)
-        .add(myPlacemarkWithContent);
-});
+        // Добавляем метку в коллекцию.
+        collection.add(placemark);
+        // Добавляем пункт в подменю.
+        submenuItem
+            .appendTo(submenu)
+            // При клике по пункту подменю открываем/закрываем баллун у метки.
+            .find('a')
+            .bind('click', function () {
+                if (!placemark.balloon.isOpen()) {
+                    placemark.balloon.open();
+                } else {
+                    placemark.balloon.close();
+                }
+                return false;
+            });
+    }
+
+    // Добавляем меню в тэг BODY.
+    menu.appendTo($('body'));
+    // Выставляем масштаб карты чтобы были видны все группы.
+    myMap.setBounds(myMap.geoObjects.getBounds());
+}

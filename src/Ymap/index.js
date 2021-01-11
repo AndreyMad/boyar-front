@@ -5,7 +5,8 @@ import {
   Placemark,
   RouteButton,
   TrafficControl,
-  GeolocationControl
+  GeolocationControl,
+  SearchControl 
 } from "react-yandex-maps";
 import BoyarImg from "../img/logomap.png";
 import { Modal, Button } from "antd";
@@ -28,10 +29,13 @@ class Ymap extends Component {
       comment: "",
     },
   };
-
+componentDidMount(){
+  const {getDots}=this.props;
+  getDots()
+}
   dotSelect(dot) {
     this.setState({
-      selectedMapState: { center: [+dot.latitude, +dot.longtitude], zoom: 14 },
+      selectedMapState: { center: [+dot.latitude, +dot.longtitude], zoom: 16 },
     });
   }
 
@@ -91,15 +95,20 @@ class Ymap extends Component {
 
     return (
       <>
-        <YMaps>
+        <YMaps 
+    query={{
+      apikey: `fe9877ac-206a-418c-9d9a-ee1b44acfe8a`,
+    }} >
           <Map
             width={`80%`}
             height={"400px"}
             defaultState={defaultMapState}
             state={selectedMapState.center ? selectedMapState : defaultMapState}
+         
           >
             <TrafficControl />
-            <RouteButton options={{ float: "right" }} />
+            <RouteButton options={{ float: "right"}} />
+            <SearchControl />
             <GeolocationControl options={{ float: 'left' }} />
             {dots.length > 0
               ? dots.map((dot) => {
@@ -169,7 +178,7 @@ class Ymap extends Component {
           onOk={this.handleOk}
           onCancel={this.handleCancel}
         >
-          <form>
+          <form className={style.formInput}>
             <input
               className={style.modalInput}
               placeholder="Адрес"
@@ -177,27 +186,30 @@ class Ymap extends Component {
               value={modalValues.adress}
               onChange={this.inputHandler}
             ></input>
-            <input
+              <input
               className={style.modalInput}
-              placeholder="Широта"
+              placeholder="Широта  *"
               id="latitude"
               value={modalValues.latitude}
               onChange={this.inputHandler}
             ></input>
             <input
               className={style.modalInput}
-              placeholder="Долгота"
+              placeholder="Долгота  *"
               id="longtitude"
               value={modalValues.longtitude}
               onChange={this.inputHandler}
             ></input>
-            <input
+                <textarea
+              
               className={style.modalInput}
               placeholder="Описание"
               id="comment"
               value={modalValues.comment}
               onChange={this.inputHandler}
-            ></input>
+            ></textarea>
+          
+        
           </form>
         </Modal>
       </>

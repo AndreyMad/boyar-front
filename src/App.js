@@ -1,22 +1,25 @@
 import React, { Component } from "react";
 import axios from "axios";
 import Ymap from "./Ymap/index";
+
+const ip = 'http://185.224.132.198'
 class App extends Component {
   state = {
     dots: [],
   };
+ 
   getDots = () => {
-    axios.post(`http://localhost:3000/api/getDots`).then((res) => {
+    axios.post(`${ip}/api/getDots`).then((res) => {
       this.setState({ dots: res.data });
     });
   };
   deleteDot = (id) => {
-    axios.post(`http://localhost:3000/api/deleteDot`, { id }).then((res) => {
+    axios.post(`${ip}//api/deleteDot`, { id }).then((res) => {
       this.setState({ dots: res.data });
     });
   };
   createDot = (data) => {
-    axios.post("http://localhost:3000/api/addDot", { data }).then((res) => {
+    axios.post(`${ip}//api/addDot`, { data }).then((res) => {
       this.setState({ dots: res.data });
 
     });
@@ -30,6 +33,7 @@ class App extends Component {
           dots={dots}
           deleteDot={this.deleteDot}
           createDot={this.createDot}
+          getDots={this.getDots}
         />
       </div>
     );

@@ -16,3 +16,17 @@
 .deleteBtn {
   margin-left: 20px;
 }
+.formInput {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  height: 100px;
+  justify-content: space-between;
+}
+.formInput > input {
+  width: 45%;
+  height: 25px;
+}
+.formInput > textarea {
+  height: 100%;
+}

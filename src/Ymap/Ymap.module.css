@@ -15,6 +15,18 @@
 }
 .deleteBtn {
   margin-left: 20px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  height: 100%;
+  transition: 200ms;
+}
+.deleteBtn:hover {
+  transition: 200ms;
+  transform: rotatez(135deg);
+  cursor: pointer;
 }
 .formInput {
   display: flex;
@@ -29,4 +41,7 @@
 }
 .formInput > textarea {
   height: 100%;
+}
+.mapContainer {
+  max-width: 700px;
 }

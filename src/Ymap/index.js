@@ -95,12 +95,16 @@ componentDidMount(){
 
     return (
       <>
+      <div className={style.mapContainer}>
+
+  
         <YMaps 
     query={{
       apikey: `fe9877ac-206a-418c-9d9a-ee1b44acfe8a`,
     }} >
           <Map
-            width={`80%`}
+            width={`100%`}
+           
             height={"400px"}
             defaultState={defaultMapState}
             state={selectedMapState.center ? selectedMapState : defaultMapState}
@@ -149,19 +153,20 @@ componentDidMount(){
               : null}
           </Map>
         </YMaps>
+        </div>
         {dots.length > 0 ? (
           <ul className={style.list}>
             {dots.map((dot) => {
               return (
-                <li value={dot.description}>
+                <li key={dot.id} value={dot.name}>
                   <a href="#" onClick={() => this.dotSelect(dot)}>
-                    {dot.description}
+                    {dot.name}
                   </a>
                   <button
                     className={style.deleteBtn}
                     onClick={() => deleteDot(dot.id)}
                   >
-                    Х
+              +
                   </button>
                 </li>
               );

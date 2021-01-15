@@ -14,12 +14,12 @@ class App extends Component {
     });
   };
   deleteDot = (id) => {
-    axios.post(`${ip}//api/deleteDot`, { id }).then((res) => {
+    axios.post(`${ip}/api/deleteDot`, { id }).then((res) => {
       this.setState({ dots: res.data });
     });
   };
   createDot = (data) => {
-    axios.post(`${ip}//api/addDot`, { data }).then((res) => {
+    axios.post(`${ip}/api/addDot`, { data }).then((res) => {
       this.setState({ dots: res.data });
 
     });

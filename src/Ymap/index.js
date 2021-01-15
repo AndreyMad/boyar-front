@@ -13,7 +13,6 @@ import { Modal, Button } from "antd";
 import style from "./Ymap.module.css";
 import "antd/dist/antd.css";
 import shId from "shortid";
-
 class Ymap extends Component {
   state = {
     defaultMapState: {
@@ -23,10 +22,11 @@ class Ymap extends Component {
     selectedMapState: {},
     isModalVisible: false,
     modalValues: {
-      adress: "",
+      name: "",
       latitude: "",
       longtitude: "",
-      comment: "",
+      description: "",
+      id:''
     },
   };
 componentDidMount(){
@@ -47,34 +47,56 @@ componentDidMount(){
 
   handleOk = () => {
     const { modalValues } = this.state;
-    const { createDot } = this.props;
-    const latitudeRegexp = /([-+]?(([1-8]?\d(\.\d+))+|90))/g;
-    const longtitudeRegexp = /^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/g;
-    const latitude = modalValues.latitude.replace(",", ".");
-    const longtitude = modalValues.longtitude.replace(",", ".");
-    if (!latitude.match(latitudeRegexp)) {
-      return alert("неправильная широта");
-    } else if (!longtitude.match(longtitudeRegexp)) {
-      return alert("неправильная долгота");
+    const {editDot}=this.props
+    if(modalValues.id===''){
+      console.log('add' );
+      const { createDot } = this.props;
+      const latitudeRegexp = /([-+]?(([1-8]?\d(\.\d+))+|90))/g;
+      const longtitudeRegexp = /^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/g;
+      const latitude = modalValues.latitude.replace(",", ".");
+      const longtitude = modalValues.longtitude.replace(",", ".");
+      if (!latitude.match(latitudeRegexp)) {
+        return alert("неправильная широта");
+      } else if (!longtitude.match(longtitudeRegexp)) {
+        return alert("неправильная долгота");
+      }
+      const newDot = {
+        latitude: latitude,
+        longtitude: longtitude,
+        name: modalValues.name,
+        description: modalValues.description,
+        id: shId.generate(),
+      };
+      createDot(newDot);
+     return this.handleCancel();
     }
-    const newDot = {
-      latitude: latitude,
-      longtitude: longtitude,
-      name: modalValues.adress,
-      description: modalValues.comment,
-      id: shId.generate(),
-    };
-    createDot(newDot);
-    this.handleCancel();
+    editDot(modalValues)
+    this.handleCancel()
   };
+
+editHandler = (id)=>{
+  const {dots} =this.props
+  const dotToEdit =dots.find(dot=>dot.id===id) 
+  this.setState({
+    isModalVisible: false,
+    modalValues: {
+      name: dotToEdit.name,
+      latitude:dotToEdit.latitude,
+      longtitude: dotToEdit.longtitude,
+      description: dotToEdit.description,
+      id:dotToEdit.id
+    },
+  },()=>this.showModal());
+}
+
   handleCancel = () => {
     this.setState({
       isModalVisible: false,
       modalValues: {
-        adress: "",
+        name: "",
         latitude: "",
         longtitude: "",
-        comment: "",
+        description: "",
       },
     });
   };
@@ -83,6 +105,19 @@ componentDidMount(){
       modalValues: { ...prevState.modalValues, [target.id]: target.value },
     }));
   };
+
+
+dragEnd=(e,id)=>{
+  const {editDot}=this.props
+  const position =e.get('target').geometry.getCoordinates()
+  console.log(id);
+  const newDot ={
+    id:id,
+    latitude:position[0],
+    longtitude:position[1]
+  }
+  editDot(newDot)
+}
 
   render() {
     const { dots, deleteDot } = this.props;
@@ -118,24 +153,14 @@ componentDidMount(){
               ? dots.map((dot) => {
                   return (
                     <Placemark
+                    key={dot.id}
                       geometry={[+dot.latitude, +dot.longtitude]}
+                      onDragEnd={(e)=>this.dragEnd(e, dot.id)}
                       properties={{
                         hintContent: dot.name,
-
-                        balloonContent: ` <span>График работы:</span> <br/> <span>${
-                          dot.description
-                        }</span> ${
-                          dot.comment ? (
-                            <>
-                              <br />
-                              <span>{dot.comment}</span>
-                            </>
-                          ) : (
-                            ""
-                          )
-                        }`,
-                      }}
-                      options={{
+                        balloonContent: dot.description}}
+                        options={{
+                        draggable:true,
                         hideIconOnBalloonOpen: false,
                         iconLayout: "default#image",
                         iconImageHref: BoyarImg,
@@ -154,19 +179,28 @@ componentDidMount(){
           </Map>
         </YMaps>
         </div>
+        <Button type="primary" onClick={this.showModal}>
+          Open Modal
+        </Button>
         {dots.length > 0 ? (
           <ul className={style.list}>
             {dots.map((dot) => {
               return (
                 <li key={dot.id} value={dot.name}>
-                  <a href="#" onClick={() => this.dotSelect(dot)}>
+                  <span onClick={() => this.dotSelect(dot)}>
                     {dot.name}
-                  </a>
+                  </span>
                   <button
                     className={style.deleteBtn}
                     onClick={() => deleteDot(dot.id)}
                   >
               +
+                  </button>
+                  <button
+                    className={style.editBtn}
+                    onClick={() => this.editHandler(dot.id)}
+                  >
+                    
                   </button>
                 </li>
               );
@@ -174,21 +208,20 @@ componentDidMount(){
           </ul>
         ) : null}
 
-        <Button type="primary" onClick={this.showModal}>
-          Open Modal
-        </Button>
+       
         <Modal
           title="Добавить новую точку"
           visible={isModalVisible}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
+          style={{marginBottom:'100px'}}
         >
           <form className={style.formInput}>
             <input
               className={style.modalInput}
               placeholder="Адрес"
-              id="adress"
-              value={modalValues.adress}
+              id="name"
+              value={modalValues.name}
               onChange={this.inputHandler}
             ></input>
               <input
@@ -209,8 +242,8 @@ componentDidMount(){
               
               className={style.modalInput}
               placeholder="Описание"
-              id="comment"
-              value={modalValues.comment}
+              id="description"
+              value={modalValues.description}
               onChange={this.inputHandler}
             ></textarea>
           

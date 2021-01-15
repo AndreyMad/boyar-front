@@ -8,19 +8,20 @@
 .list > li {
   display: flex;
   justify-content: space-between;
-  width: 100%;
+  width: 300px;
 }
 .list > li > a {
   text-decoration: none;
 }
 .deleteBtn {
-  margin-left: 20px;
+  margin-left: auto;
   border-radius: 50%;
   background: transparent;
   border: none;
   font-size: 16px;
   font-weight: bold;
   height: 100%;
+  margin-right: 30px;
   transition: 200ms;
 }
 .deleteBtn:hover {
@@ -42,6 +43,27 @@
 .formInput > textarea {
   height: 100%;
 }
-.mapContainer {
-  max-width: 700px;
+
+.editBtn {
+  background-image: url("../img/edit.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  border: none;
+  background-color: white;
+  width: 17px;
+  transition: 300ms;
+}
+.editBtn:hover {
+  cursor: pointer;
+  width: 19px;
+  transition: 300ms;
+  outline: none;
+}
+.editBtn:active,
+.editBtn:focus,
+.deleteBtn:active,
+.deleteBtn:focus {
+  outline: none;
+  border: none;
 }

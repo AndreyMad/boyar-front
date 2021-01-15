@@ -5,14 +5,14 @@ import {
   Placemark,
   RouteButton,
   TrafficControl,
-  GeolocationControl
+  GeolocationControl,
+  SearchControl 
 } from "react-yandex-maps";
 import BoyarImg from "../img/logomap.png";
 import { Modal, Button } from "antd";
 import style from "./Ymap.module.css";
 import "antd/dist/antd.css";
 import shId from "shortid";
-
 class Ymap extends Component {
   state = {
     defaultMapState: {
@@ -22,16 +22,20 @@ class Ymap extends Component {
     selectedMapState: {},
     isModalVisible: false,
     modalValues: {
-      adress: "",
+      name: "",
       latitude: "",
       longtitude: "",
-      comment: "",
+      description: "",
+      id:''
     },
   };
-
+componentDidMount(){
+  const {getDots}=this.props;
+  getDots()
+}
   dotSelect(dot) {
     this.setState({
-      selectedMapState: { center: [+dot.latitude, +dot.longtitude], zoom: 14 },
+      selectedMapState: { center: [+dot.latitude, +dot.longtitude], zoom: 16 },
     });
   }
 
@@ -43,34 +47,56 @@ class Ymap extends Component {
 
   handleOk = () => {
     const { modalValues } = this.state;
-    const { createDot } = this.props;
-    const latitudeRegexp = /([-+]?(([1-8]?\d(\.\d+))+|90))/g;
-    const longtitudeRegexp = /^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/g;
-    const latitude = modalValues.latitude.replace(",", ".");
-    const longtitude = modalValues.longtitude.replace(",", ".");
-    if (!latitude.match(latitudeRegexp)) {
-      return alert("неправильная широта");
-    } else if (!longtitude.match(longtitudeRegexp)) {
-      return alert("неправильная долгота");
+    const {editDot}=this.props
+    if(modalValues.id===''){
+      console.log('add' );
+      const { createDot } = this.props;
+      const latitudeRegexp = /([-+]?(([1-8]?\d(\.\d+))+|90))/g;
+      const longtitudeRegexp = /^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/g;
+      const latitude = modalValues.latitude.replace(",", ".");
+      const longtitude = modalValues.longtitude.replace(",", ".");
+      if (!latitude.match(latitudeRegexp)) {
+        return alert("неправильная широта");
+      } else if (!longtitude.match(longtitudeRegexp)) {
+        return alert("неправильная долгота");
+      }
+      const newDot = {
+        latitude: latitude,
+        longtitude: longtitude,
+        name: modalValues.name,
+        description: modalValues.description,
+        id: shId.generate(),
+      };
+      createDot(newDot);
+     return this.handleCancel();
     }
-    const newDot = {
-      latitude: latitude,
-      longtitude: longtitude,
-      name: modalValues.adress,
-      description: modalValues.comment,
-      id: shId.generate(),
-    };
-    createDot(newDot);
-    this.handleCancel();
+    editDot(modalValues)
+    this.handleCancel()
   };
+
+editHandler = (id)=>{
+  const {dots} =this.props
+  const dotToEdit =dots.find(dot=>dot.id===id) 
+  this.setState({
+    isModalVisible: false,
+    modalValues: {
+      name: dotToEdit.name,
+      latitude:dotToEdit.latitude,
+      longtitude: dotToEdit.longtitude,
+      description: dotToEdit.description,
+      id:dotToEdit.id
+    },
+  },()=>this.showModal());
+}
+
   handleCancel = () => {
     this.setState({
       isModalVisible: false,
       modalValues: {
-        adress: "",
+        name: "",
         latitude: "",
         longtitude: "",
-        comment: "",
+        description: "",
       },
     });
   };
@@ -91,20 +117,26 @@ class Ymap extends Component {
 
     return (
       <>
-        <YMaps>
+        <YMaps 
+    query={{
+      apikey: `fe9877ac-206a-418c-9d9a-ee1b44acfe8a`,
+    }} >
           <Map
             width={`80%`}
             height={"400px"}
             defaultState={defaultMapState}
             state={selectedMapState.center ? selectedMapState : defaultMapState}
+         
           >
             <TrafficControl />
-            <RouteButton options={{ float: "right" }} />
+            <RouteButton options={{ float: "right"}} />
+            <SearchControl />
             <GeolocationControl options={{ float: 'left' }} />
             {dots.length > 0
               ? dots.map((dot) => {
                   return (
                     <Placemark
+                    key={dot.id}
                       geometry={[+dot.latitude, +dot.longtitude]}
                       properties={{
                         hintContent: dot.name,
@@ -112,10 +144,10 @@ class Ymap extends Component {
                         balloonContent: ` <span>График работы:</span> <br/> <span>${
                           dot.description
                         }</span> ${
-                          dot.comment ? (
+                          dot.description ? (
                             <>
                               <br />
-                              <span>{dot.comment}</span>
+                              <span>{dot.description}</span>
                             </>
                           ) : (
                             ""
@@ -140,19 +172,28 @@ class Ymap extends Component {
               : null}
           </Map>
         </YMaps>
+        <Button type="primary" onClick={this.showModal}>
+          Open Modal
+        </Button>
         {dots.length > 0 ? (
           <ul className={style.list}>
             {dots.map((dot) => {
               return (
-                <li value={dot.description}>
-                  <a href="#" onClick={() => this.dotSelect(dot)}>
-                    {dot.description}
-                  </a>
+                <li key={dot.id} value={dot.name}>
+                  <span onClick={() => this.dotSelect(dot)}>
+                    {dot.name}
+                  </span>
                   <button
                     className={style.deleteBtn}
                     onClick={() => deleteDot(dot.id)}
                   >
                     Х
+                  </button>
+                  <button
+                    className={style.editBtn}
+                    onClick={() => this.editHandler(dot.id)}
+                  >
+                    
                   </button>
                 </li>
               );
@@ -160,44 +201,46 @@ class Ymap extends Component {
           </ul>
         ) : null}
 
-        <Button type="primary" onClick={this.showModal}>
-          Open Modal
-        </Button>
+       
         <Modal
           title="Добавить новую точку"
           visible={isModalVisible}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
+          style={{marginBottom:'100px'}}
         >
-          <form>
+          <form className={style.formInput}>
             <input
               className={style.modalInput}
               placeholder="Адрес"
-              id="adress"
-              value={modalValues.adress}
+              id="name"
+              value={modalValues.name}
               onChange={this.inputHandler}
             ></input>
-            <input
+              <input
               className={style.modalInput}
-              placeholder="Широта"
+              placeholder="Широта  *"
               id="latitude"
               value={modalValues.latitude}
               onChange={this.inputHandler}
             ></input>
             <input
               className={style.modalInput}
-              placeholder="Долгота"
+              placeholder="Долгота  *"
               id="longtitude"
               value={modalValues.longtitude}
               onChange={this.inputHandler}
             ></input>
-            <input
+                <textarea
+              
               className={style.modalInput}
               placeholder="Описание"
-              id="comment"
-              value={modalValues.comment}
+              id="description"
+              value={modalValues.description}
               onChange={this.inputHandler}
-            ></input>
+            ></textarea>
+          
+        
           </form>
         </Modal>
       </>

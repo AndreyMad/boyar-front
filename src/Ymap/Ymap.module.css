@@ -8,11 +8,35 @@
 .list > li {
   display: flex;
   justify-content: space-between;
-  width: 100%;
+  width: 200px;
+
 }
 .list > li > a {
   text-decoration: none;
 }
 .deleteBtn {
   margin-left: 20px;
+}
+.formInput {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  height: 100px;
+  justify-content: space-between;
+}
+.formInput > input {
+  width: 45%;
+  height: 25px;
+}
+.formInput > textarea {
+  height: 100%;
+}
+
+.editBtn{
+  background-image: url('../img/edit.svg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  border: none;
+  background-color: none;
 }

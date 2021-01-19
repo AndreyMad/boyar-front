@@ -6,7 +6,7 @@ import {
   RouteButton,
   TrafficControl,
   GeolocationControl,
-  SearchControl 
+  SearchControl,
 } from "react-yandex-maps";
 import BoyarImg from "../img/logomap.png";
 import { Modal, Button } from "antd";
@@ -26,13 +26,10 @@ class Ymap extends Component {
       latitude: "",
       longtitude: "",
       description: "",
-      id:''
+      id: "",
     },
   };
-componentDidMount(){
-  const {getDots}=this.props;
-  getDots()
-}
+
   dotSelect(dot) {
     this.setState({
       selectedMapState: { center: [+dot.latitude, +dot.longtitude], zoom: 16 },
@@ -47,9 +44,9 @@ componentDidMount(){
 
   handleOk = () => {
     const { modalValues } = this.state;
-    const {editDot}=this.props
-    if(modalValues.id===''){
-      console.log('add' );
+    const { editDot } = this.props;
+    if (modalValues.id === "") {
+      console.log("add");
       const { createDot } = this.props;
       const latitudeRegexp = /([-+]?(([1-8]?\d(\.\d+))+|90))/g;
       const longtitudeRegexp = /^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/g;
@@ -67,27 +64,31 @@ componentDidMount(){
         description: modalValues.description,
         id: shId.generate(),
       };
-      createDot(newDot);
-     return this.handleCancel();
+      const isDotsUpdate =   createDot(newDot);
+      console.log('%cindex.js line:68 object', 'color: #007acc;', isDotsUpdate);
+      return this.handleCancel();
     }
-    editDot(modalValues)
-    this.handleCancel()
+    editDot(modalValues);
+    this.handleCancel();
   };
 
-editHandler = (id)=>{
-  const {dots} =this.props
-  const dotToEdit =dots.find(dot=>dot.id===id) 
-  this.setState({
-    isModalVisible: false,
-    modalValues: {
-      name: dotToEdit.name,
-      latitude:dotToEdit.latitude,
-      longtitude: dotToEdit.longtitude,
-      description: dotToEdit.description,
-      id:dotToEdit.id
-    },
-  },()=>this.showModal());
-}
+  editHandler = (id) => {
+    const { dots } = this.props;
+    const dotToEdit = dots.find((dot) => dot.id === id);
+    this.setState(
+      {
+        isModalVisible: false,
+        modalValues: {
+          name: dotToEdit.name,
+          latitude: dotToEdit.latitude,
+          longtitude: dotToEdit.longtitude,
+          description: dotToEdit.description,
+          id: dotToEdit.id,
+        },
+      },
+      () => this.showModal()
+    );
+  };
 
   handleCancel = () => {
     this.setState({
@@ -100,6 +101,7 @@ editHandler = (id)=>{
       },
     });
   };
+
   inputHandler = ({ target }) => {
     this.setState((prevState) => ({
       modalValues: { ...prevState.modalValues, [target.id]: target.value },
@@ -117,26 +119,26 @@ editHandler = (id)=>{
 
     return (
       <>
-        <YMaps 
-    query={{
-      apikey: `fe9877ac-206a-418c-9d9a-ee1b44acfe8a`,
-    }} >
+        <YMaps
+          query={{
+            apikey: `fe9877ac-206a-418c-9d9a-ee1b44acfe8a`,
+          }}
+        >
           <Map
             width={`80%`}
             height={"400px"}
             defaultState={defaultMapState}
             state={selectedMapState.center ? selectedMapState : defaultMapState}
-         
           >
             <TrafficControl />
-            <RouteButton options={{ float: "right"}} />
+            <RouteButton options={{ float: "right" }} />
             <SearchControl />
-            <GeolocationControl options={{ float: 'left' }} />
+            <GeolocationControl options={{ float: "left" }} />
             {dots.length > 0
               ? dots.map((dot) => {
                   return (
                     <Placemark
-                    key={dot.id}
+                      key={dot.id}
                       geometry={[+dot.latitude, +dot.longtitude]}
                       properties={{
                         hintContent: dot.name,
@@ -180,9 +182,7 @@ editHandler = (id)=>{
             {dots.map((dot) => {
               return (
                 <li key={dot.id} value={dot.name}>
-                  <span onClick={() => this.dotSelect(dot)}>
-                    {dot.name}
-                  </span>
+                  <span onClick={() => this.dotSelect(dot)}>{dot.name}</span>
                   <button
                     className={style.deleteBtn}
                     onClick={() => deleteDot(dot.id)}
@@ -192,22 +192,19 @@ editHandler = (id)=>{
                   <button
                     className={style.editBtn}
                     onClick={() => this.editHandler(dot.id)}
-                  >
-                    
-                  </button>
+                  ></button>
                 </li>
               );
             })}
           </ul>
         ) : null}
 
-       
         <Modal
           title="Добавить новую точку"
           visible={isModalVisible}
           onOk={this.handleOk}
           onCancel={this.handleCancel}
-          style={{marginBottom:'100px'}}
+          style={{ marginBottom: "100px" }}
         >
           <form className={style.formInput}>
             <input
@@ -217,7 +214,7 @@ editHandler = (id)=>{
               value={modalValues.name}
               onChange={this.inputHandler}
             ></input>
-              <input
+            <input
               className={style.modalInput}
               placeholder="Широта  *"
               id="latitude"
@@ -231,16 +228,13 @@ editHandler = (id)=>{
               value={modalValues.longtitude}
               onChange={this.inputHandler}
             ></input>
-                <textarea
-              
+            <textarea
               className={style.modalInput}
               placeholder="Описание"
               id="description"
               value={modalValues.description}
               onChange={this.inputHandler}
             ></textarea>
-          
-        
           </form>
         </Modal>
       </>

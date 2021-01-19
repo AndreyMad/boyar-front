@@ -108,6 +108,19 @@ class Ymap extends Component {
     }));
   };
 
+
+dragEnd=(e,id)=>{
+  const {editDot}=this.props
+  const position =e.get('target').geometry.getCoordinates()
+  console.log(id);
+  const newDot ={
+    id:id,
+    latitude:position[0],
+    longtitude:position[1]
+  }
+  editDot(newDot)
+}
+
   render() {
     const { dots, deleteDot } = this.props;
     const {
@@ -119,13 +132,16 @@ class Ymap extends Component {
 
     return (
       <>
-        <YMaps
-          query={{
-            apikey: `fe9877ac-206a-418c-9d9a-ee1b44acfe8a`,
-          }}
-        >
+      <div className={style.mapContainer}>
+
+  
+        <YMaps 
+    query={{
+      apikey: `fe9877ac-206a-418c-9d9a-ee1b44acfe8a`,
+    }} >
           <Map
-            width={`80%`}
+            width={`100%`}
+           
             height={"400px"}
             defaultState={defaultMapState}
             state={selectedMapState.center ? selectedMapState : defaultMapState}
@@ -140,23 +156,12 @@ class Ymap extends Component {
                     <Placemark
                       key={dot.id}
                       geometry={[+dot.latitude, +dot.longtitude]}
+                      onDragEnd={(e)=>this.dragEnd(e, dot.id)}
                       properties={{
                         hintContent: dot.name,
-
-                        balloonContent: ` <span>График работы:</span> <br/> <span>${
-                          dot.description
-                        }</span> ${
-                          dot.description ? (
-                            <>
-                              <br />
-                              <span>{dot.description}</span>
-                            </>
-                          ) : (
-                            ""
-                          )
-                        }`,
-                      }}
-                      options={{
+                        balloonContent: dot.description}}
+                        options={{
+                        draggable:true,
                         hideIconOnBalloonOpen: false,
                         iconLayout: "default#image",
                         iconImageHref: BoyarImg,
@@ -174,6 +179,7 @@ class Ymap extends Component {
               : null}
           </Map>
         </YMaps>
+        </div>
         <Button type="primary" onClick={this.showModal}>
           Open Modal
         </Button>
@@ -187,7 +193,7 @@ class Ymap extends Component {
                     className={style.deleteBtn}
                     onClick={() => deleteDot(dot.id)}
                   >
-                    Х
+              +
                   </button>
                   <button
                     className={style.editBtn}

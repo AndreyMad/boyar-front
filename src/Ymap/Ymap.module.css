@@ -8,14 +8,26 @@
 .list > li {
   display: flex;
   justify-content: space-between;
-  width: 200px;
-
+  width: 300px;
 }
 .list > li > a {
   text-decoration: none;
 }
 .deleteBtn {
-  margin-left: 20px;
+  margin-left: auto;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  height: 100%;
+  margin-right: 30px;
+  transition: 200ms;
+}
+.deleteBtn:hover {
+  transition: 200ms;
+  transform: rotatez(135deg);
+  cursor: pointer;
 }
 .formInput {
   display: flex;
@@ -32,11 +44,26 @@
   height: 100%;
 }
 
-.editBtn{
-  background-image: url('../img/edit.svg');
+.editBtn {
+  background-image: url("../img/edit.svg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
   border: none;
-  background-color: none;
+  background-color: white;
+  width: 17px;
+  transition: 300ms;
+}
+.editBtn:hover {
+  cursor: pointer;
+  width: 19px;
+  transition: 300ms;
+  outline: none;
+}
+.editBtn:active,
+.editBtn:focus,
+.deleteBtn:active,
+.deleteBtn:focus {
+  outline: none;
+  border: none;
 }

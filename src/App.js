@@ -2,6 +2,11 @@ import React, { Component } from "react";
 import * as API from "./api/api";
 import Ymap from "./Ymap/index";
 
+<<<<<<< HEAD
+=======
+// const ip = 'http://185.224.132.198'
+const ip2= "http://localhost:80"
+>>>>>>> 9bad1a2afaa6d94d58aa14cee6d93fc976d3dad8
 class App extends Component {
   state = {
     dots: [],

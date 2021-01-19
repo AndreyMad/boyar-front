@@ -2,25 +2,25 @@ import React, { Component } from "react";
 import axios from "axios";
 import Ymap from "./Ymap/index";
 
-// const ip = 'http://185.224.132.198'
-const ip2= "http://localhost:80"
+//  const ip = 'https://185.224.132.198'
+const ip= "https://localhost:443"
 class App extends Component {
   state = {
     dots: [],
   };
  
   getDots = () => {
-    axios.post(`${ip2}/api/getDots`).then((res) => {
+    axios.post(`${ip}/api/getDots`).then((res) => {
           this.setState({ dots: res.data});
     });
   };
   deleteDot = (id) => {
-    axios.post(`${ip2}/api/deleteDot`, { id }).then((res) => {
+    axios.post(`${ip}/api/deleteDot`, { id }).then((res) => {
       this.setState({ dots: res.data });
     });
   };
   createDot = (data) => {
-    axios.post(`${ip2}/api/addDot`, { data }).then((res) => {
+    axios.post(`${ip}/api/addDot`, { data }).then((res) => {
       this.setState({ dots: res.data });
 
     });
@@ -28,7 +28,7 @@ class App extends Component {
 
 
   editDot=(dot)=>{
-   axios.post(`${ip2}/api/editDot`, { dot }).then((res) => {
+   axios.post(`${ip}/api/editDot`, { dot }).then((res) => {
        this.setState({ dots: res.data });
 
     });

@@ -2,11 +2,6 @@ import React, { Component } from "react";
 import * as API from "./api/api";
 import Ymap from "./Ymap/index";
 
-<<<<<<< HEAD
-=======
-// const ip = 'http://185.224.132.198'
-const ip2= "http://localhost:80"
->>>>>>> 9bad1a2afaa6d94d58aa14cee6d93fc976d3dad8
 class App extends Component {
   state = {
     dots: [],
@@ -14,7 +9,6 @@ class App extends Component {
 
   componentDidMount() {
     this.getDots();
-   
   }
 
   getDots = () => {
@@ -22,9 +16,9 @@ class App extends Component {
     API.getDots().then((res) => {
       if (dots.length < res.data.length) {
         this.setState({ dots: res.data });
-        return true
+        return true;
       }
-      return false
+      return false;
     });
   };
 
@@ -34,12 +28,14 @@ class App extends Component {
   //   });
   // };
 
-  // createDot = (data) => {
-  //   const {dots}=this.state
-  //   axios.post(`${ip}/api/addDot`, { data }).then((res) => {
-
-  //   });
-  // };
+  createDot = (data) => {
+    API.createDot(data).then((res) => {
+      if (res.data.status==='succes') {
+        this.getDots();
+        return true;
+      }return false
+    });
+  };
 
   // editDot=(dot)=>{
   //  axios.post(`${ip}/api/editDot`, { dot }).then((res) => {
@@ -54,9 +50,9 @@ class App extends Component {
       <div>
         <button onClick={this.getDots}>Прорисовать точки из БД </button>
         <Ymap
-          dots={dots.sort((a, b) => a.number - b.number)}
+          dots={dots.sort((a, b) => b.number - a.number)}
           deleteDot={API.deleteDot}
-          createDot={API.createDot}
+          createDot={this.createDot}
           getDots={API.getDots}
           editDot={API.editDot}
         />

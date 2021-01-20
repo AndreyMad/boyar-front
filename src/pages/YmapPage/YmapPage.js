@@ -1,14 +1,17 @@
 import React, { Component } from "react";
 import * as API from "../../api/api";
 import Ymap from "../../Components/Ymap/Ymap";
-
+import LoginModal from '../../Components/LoginModal/LoginModal'
 class YmapPage extends Component {
   state = {
     dots: [],
+    isAuthorized:false
   };
 
   componentDidMount() {
-    this.getDots();
+const {isAuthorized}=this.state
+return isAuthorized?this.getDots():null
+    
   }
 
   getDots = () => {
@@ -58,17 +61,17 @@ class YmapPage extends Component {
   };
 
   render() {
-    const { dots } = this.state;
+    const { dots, isAuthorized } = this.state;
     return (
       <div>
-        {/* <button onClick={this.getDots}>Прорисовать точки из БД </button> */}
-        <Ymap
+        {isAuthorized? <Ymap
           dots={dots.sort((a, b) => b.number - a.number)}
           deleteDot={this.deleteDot}
           createDot={this.createDot}
           getDots={this.getDots}
           editDot={this.editDot}
-        />
+        />:<LoginModal/>}
+       
       </div>
     );
   }

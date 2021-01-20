@@ -5,7 +5,7 @@ import LoginModal from '../../Components/LoginModal/LoginModal'
 class YmapPage extends Component {
   state = {
     dots: [],
-    isAuthorized:false
+    isAuthorized:true
   };
 
   componentDidMount() {
@@ -60,6 +60,9 @@ return isAuthorized?this.getDots():null
     });
   };
 
+logIn = (user)=>{
+ return API.boyarAuthorization(user).then(res=>{console.log(res)})
+}
   render() {
     const { dots, isAuthorized } = this.state;
     return (
@@ -70,7 +73,8 @@ return isAuthorized?this.getDots():null
           createDot={this.createDot}
           getDots={this.getDots}
           editDot={this.editDot}
-        />:<LoginModal/>}
+  
+        />:<LoginModal logIn={this.logIn}/>}
        
       </div>
     );

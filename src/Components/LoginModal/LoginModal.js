@@ -7,7 +7,8 @@ class LoginModal extends Component {
         password:''
     }
     handleOk=()=>{
-
+        const {logIn}=this.props
+        logIn({login:'shalena', password:'makaka'})
         console.log('ok' );
     }
 
@@ -15,9 +16,9 @@ class LoginModal extends Component {
         const {handleSubmitModal, closeModal} =this.state
         return (
             <Modal
-            // title={modalValues.id.length===0?'Добавить новую точку':'Редактировать точку'}
-                visible
-            // onOk={this.handleOk}
+            //  title={modalValues.id.length===0?'Добавить новую точку':'Редактировать точку'}
+            visible
+             onOk={this.handleOk}
             // onCancel={this.handleCancel}
             style={{ marginBottom: "100px" }}
           ><span>modal</span></Modal>

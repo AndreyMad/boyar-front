@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const ip = 'https://jwebdev.pro'
-// const ip = "https://localhost:443";
+// const ip = 'https://jwebdev.pro'
+const ip = "https://localhost:443";
 
 export function getDots() {
   return axios.post(`${ip}/boyar/api/getDots`);
@@ -21,4 +21,8 @@ export const editDot = (dot) => {
   }
 export const boyarAuthorization = (user)=>{
   return axios.post(`${ip}/boyar/api/authorization`, {user})
+}
+
+export const boyarCheckSession = (token)=>{
+  return axios.post(`${ip}/boyar/api/checksessiontoken`, {token})
 }

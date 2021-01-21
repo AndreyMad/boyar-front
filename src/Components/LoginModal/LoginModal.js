@@ -7,19 +7,25 @@ class LoginModal extends Component {
         password:''
     }
     handleOk=()=>{
-        const {logIn}=this.props
+        const {logIn, modalClose, checkSession}=this.props
+
         logIn({login:'shalena', password:'makaka'})
-        console.log('ok' );
+        .then((res)=>{
+            console.log( res.status==='succes');
+           return res.status==='succes'?(checkSession(), modalClose()):null})
+  
+       
     }
 
     render() {
         const {handleSubmitModal, closeModal} =this.state
+      const {modalClose}=this.props
         return (
             <Modal
-            //  title={modalValues.id.length===0?'Добавить новую точку':'Редактировать точку'}
+            title={'Авторизація'}
             visible
              onOk={this.handleOk}
-            // onCancel={this.handleCancel}
+            onCancel={modalClose}
             style={{ marginBottom: "100px" }}
           ><span>modal</span></Modal>
         );

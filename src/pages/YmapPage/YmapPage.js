@@ -1,17 +1,19 @@
 import React, { Component } from "react";
 import * as API from "../../api/api";
-import Ymap from "../../Components/Ymap/Ymap";
-import LoginModal from '../../Components/LoginModal/LoginModal'
+import YmapAdmin from "../../Components/YmapAdmin/YmapAdmin";
+import LoginModal from "../../Components/LoginModal/LoginModal";
+import { message, Space } from "antd";
+import Ymap from '../../Components/Ymap/Ymap'
 class YmapPage extends Component {
   state = {
     dots: [],
-    isAuthorized:true
+    isAuthorized: false,
+    isLoginModalOpen:false,
+    user:''
   };
 
   componentDidMount() {
-const {isAuthorized}=this.state
-return isAuthorized?this.getDots():null
-    
+  this.checkSession()
   }
 
   getDots = () => {
@@ -29,7 +31,7 @@ return isAuthorized?this.getDots():null
   };
 
   deleteDot = (id) => {
-    return API.deleteDot( id ).then((res) => {
+    return API.deleteDot(id).then((res) => {
       console.log(res);
       if (res.data.status === "succes") {
         this.getDots();
@@ -60,22 +62,71 @@ return isAuthorized?this.getDots():null
     });
   };
 
-logIn = (user)=>{
- return API.boyarAuthorization(user).then(res=>{console.log(res)})
-}
+  modalOpen=()=>{
+    console.log('asdasda');
+    this.setState({isLoginModalOpen:true})
+  }
+  modalClose=()=>{
+    this.setState({isLoginModalOpen:false})
+
+  }
+  logout =()=>{
+    console.log('logout');
+    sessionStorage.removeItem('sessiontoken')
+    this.checkSession()
+  }
+  logIn = (user) => {
+    return API.boyarAuthorization(user).then((res) => {
+      if (res.data.status === "succes") {
+        sessionStorage.setItem("sessiontoken", res.data.token);
+        return res.data
+      }
+    });
+  };
+
+  checkSession = async () => {
+  
+    const token = sessionStorage.getItem("sessiontoken");
+    if (!token) {
+      this.setState({ isAuthorized: false });
+    }
+   const isChecked= await API.boyarCheckSession(token).then((res) => {
+      if (res.data.status === "not authorized") {
+        this.setState({ isAuthorized: false });
+        message.warning("Вы не авторизованы. Разрешен только просмотр", 1);
+        return false
+      }
+      this.setState({
+        user: res.data.username,
+        isAuthorized:true,
+      })
+      message.success(`Хелоу ${res.data.username}`)
+      this.getDots()
+      return true
+    });
+    return isChecked
+  };
+
   render() {
-    const { dots, isAuthorized } = this.state;
+    const { dots, isAuthorized,isLoginModalOpen } = this.state;
     return (
       <div>
-        {isAuthorized? <Ymap
-          dots={dots.sort((a, b) => b.number - a.number)}
-          deleteDot={this.deleteDot}
-          createDot={this.createDot}
-          getDots={this.getDots}
-          editDot={this.editDot}
-  
-        />:<LoginModal logIn={this.logIn}/>}
-       
+      <button onClick={isAuthorized?this.logout:this.modalOpen}>{isAuthorized?'Вийти':'Увійти'} </button>
+     
+        {isLoginModalOpen?<LoginModal checkSession={this.checkSession} modalClose={this.modalClose}  modalClose={this.modalClose} logIn={this.logIn} />:null}
+        {isAuthorized ? (
+          <YmapAdmin
+            dots={dots.sort((a, b) => b.number - a.number)}
+            deleteDot={this.deleteDot}
+            createDot={this.createDot}
+            getDots={this.getDots}
+            editDot={this.editDot}
+          />
+        ) : (
+          <Ymap dots={dots.sort((a, b) => b.number - a.number)} />
+          
+        )}
+        <Space></Space>
       </div>
     );
   }

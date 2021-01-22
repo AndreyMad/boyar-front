@@ -2,7 +2,7 @@ import HomePage from "../pages/HomePage/HomePage";
 import BoyarMapPage from "../pages/YmapPage/YmapPage";
 
 
-export default {
+const routes= {
   HOME_PAGE: {
     path: "/",
     component: HomePage
@@ -12,3 +12,4 @@ export default {
     component: BoyarMapPage
   }
 };
+export default routes

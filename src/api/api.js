@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const ip = 'https://jwebdev.pro'
-const ip = "https://localhost:443";
+const ip = 'https://jwebdev.pro'
+// const ip = "https://localhost:443";
 
 export function getDots() {
   return axios.post(`${ip}/boyar/api/getDots`);

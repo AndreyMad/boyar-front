@@ -137,8 +137,8 @@ class YmapAdmin extends Component {
       defaultMapState,
       selectedMapState,
       isModalVisible,
-      modalValues,
-      modalTitle
+      modalValues
+  
     } = this.state;
 
     return (

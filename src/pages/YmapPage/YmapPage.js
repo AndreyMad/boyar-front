@@ -4,6 +4,8 @@ import YmapAdmin from "../../Components/YmapAdmin/YmapAdmin";
 import LoginModal from "../../Components/LoginModal/LoginModal";
 import { message, Space } from "antd";
 import Ymap from '../../Components/Ymap/Ymap'
+import { Button } from 'antd';
+import style from './YmapPage.module.css'
 class YmapPage extends Component {
   state = {
     dots: [],
@@ -13,6 +15,7 @@ class YmapPage extends Component {
   };
 
   componentDidMount() {
+    this.getDots()
   this.checkSession()
   }
 
@@ -63,24 +66,25 @@ class YmapPage extends Component {
   };
 
   modalOpen=()=>{
-    console.log('asdasda');
     this.setState({isLoginModalOpen:true})
   }
   modalClose=()=>{
     this.setState({isLoginModalOpen:false})
 
   }
+
   logout =()=>{
-    console.log('logout');
     sessionStorage.removeItem('sessiontoken')
     this.checkSession()
   }
+
   logIn = (user) => {
     return API.boyarAuthorization(user).then((res) => {
       if (res.data.status === "succes") {
         sessionStorage.setItem("sessiontoken", res.data.token);
+        message.success(`Хелоу ${res.data.name}`)
         return res.data
-      }
+      }return res.data.status
     });
   };
 
@@ -100,8 +104,7 @@ class YmapPage extends Component {
         user: res.data.username,
         isAuthorized:true,
       })
-      message.success(`Хелоу ${res.data.username}`)
-      this.getDots()
+    
       return true
     });
     return isChecked
@@ -111,9 +114,10 @@ class YmapPage extends Component {
     const { dots, isAuthorized,isLoginModalOpen } = this.state;
     return (
       <div>
-      <button onClick={isAuthorized?this.logout:this.modalOpen}>{isAuthorized?'Вийти':'Увійти'} </button>
+        <Button className={style.authButton} onClick={isAuthorized?this.logout:this.modalOpen} >{isAuthorized?'Вийти':'Увійти'}</Button>
+   
      
-        {isLoginModalOpen?<LoginModal checkSession={this.checkSession} modalClose={this.modalClose}  modalClose={this.modalClose} logIn={this.logIn} />:null}
+        {isLoginModalOpen?<LoginModal checkSession={this.checkSession} modalClose={this.modalClose} logInFunc={this.logIn} />:null}
         {isAuthorized ? (
           <YmapAdmin
             dots={dots.sort((a, b) => b.number - a.number)}

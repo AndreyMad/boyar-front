@@ -11,6 +11,8 @@ const Navigation = () => {
       <NavLink to={routes.BOYARMAP_PAGE.path} className={style.link}>
         Карта Бояр
       </NavLink>
+      <NavLink to={routes.BOYARMAP_EXPORT_PAGE.path} className={style.link}>
+  export      </NavLink>
     </div>
   );
 };

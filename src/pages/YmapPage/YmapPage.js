@@ -6,6 +6,8 @@ import { message, Space } from "antd";
 import Ymap from '../../Components/Ymap/Ymap'
 import { Button } from 'antd';
 import style from './YmapPage.module.css'
+import Navigation from '../../Components/Navigation/Navigation'
+
 class YmapPage extends Component {
   state = {
     dots: [],
@@ -113,6 +115,8 @@ class YmapPage extends Component {
   render() {
     const { dots, isAuthorized,isLoginModalOpen } = this.state;
     return (
+      <>
+      <Navigation/>
       <div>
         <Button className={style.authButton} onClick={isAuthorized?this.logout:this.modalOpen} >{isAuthorized?'Вийти':'Увійти'}</Button>
    
@@ -132,6 +136,7 @@ class YmapPage extends Component {
         )}
         <Space></Space>
       </div>
+      </>
     );
   }
 }

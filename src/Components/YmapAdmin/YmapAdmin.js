@@ -200,7 +200,9 @@ class YmapAdmin extends Component {
             {dots.map((dot) => {
               return (
                 <li key={dot.id} value={dot.name}>
+                   <span>{dot.number}</span>
                   <span onClick={() => this.dotSelect(dot)}>{dot.name}</span>
+                 
                   <button
                     className={style.deleteBtn}
                     onClick={() => this.deleteHandler(dot.id)}

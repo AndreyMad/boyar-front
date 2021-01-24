@@ -1,6 +1,6 @@
 .list {
   list-style: none;
-  width: 300px;
+  width: 400px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -8,7 +8,11 @@
 .list > li {
   display: flex;
   justify-content: space-between;
-  width: 300px;
+  width: 100%;
+}
+.list > li :first-of-type {
+  margin-right: 20px;
+  font-weight: bold;
 }
 .list > li > a {
   text-decoration: none;

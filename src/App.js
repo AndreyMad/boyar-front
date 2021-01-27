@@ -17,9 +17,9 @@ class App extends Component {
             component={routes.BOYARMAP_PAGE.component}
           />
             <Route
-            path={routes.BOYARMAP_EXPORT_PAGE.path}
+            path={routes.PAYMANTS_PAGE.path}
             exact
-            component={routes.BOYARMAP_EXPORT_PAGE.component}
+            component={routes.PAYMANTS_PAGE.component}
           />
           <Redirect to={routes.HOME_PAGE.path} />
         </Switch>

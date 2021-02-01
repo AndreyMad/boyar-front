@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Modal,  message, Space } from "antd";
 import style from "./LoginModal.module.css";
+
+
 class LoginModal extends Component {
   state = {
     login: "",

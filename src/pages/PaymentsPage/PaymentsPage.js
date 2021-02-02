@@ -3,18 +3,28 @@ import { io } from "socket.io-client";
 import Navigation from "../../Components/Navigation/Navigation";
 const socket = io("http://localhost:80/")
 
+socket.on('getmessage', (data)=>{
+  console.log(data);
+})
+socket.on('broadcast', (description)=>{
+  console.log(description);
+})
+
+
 class PaymentsPage extends Component {
   state = {
     clientNumber: "",
     clientLastName: "",
     payment: "",
+    data:{}
   };
-  componentDidMount() {}
+ 
+
 
   messageSend = (e) => {
       e.preventDefault()
     const { clientNumber, clientLastName, payment } = this.state;
-    socket.emit("sendmessage", {clientNumber, clientLastName, payment})
+      socket.emit("sendmessage", {clientNumber, clientLastName, payment})
   };
 
   inputHandler = ({ target }) => {
@@ -23,6 +33,7 @@ class PaymentsPage extends Component {
     }));
   };
   render() {
+   
     const { clientNumber, clientLastName, payment } = this.state;
     return (
       <>
